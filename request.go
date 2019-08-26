@@ -1,8 +1,10 @@
 package request
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -32,8 +34,18 @@ func (cli *RequestMiddleware) Do() (*http.Response, error) {
 		if err == nil {
 			statusCode = res.StatusCode
 		}
-		fmt.Printf("| %s | %d | %s | %s\n", cli.Request.Method, statusCode, time.Since(now).String(), cli.Request.URL.String())
+		fmt.Printf("%s | %s | %d | %s | %s\n", now.Format("2006-01-02 15:04:05"), cli.Request.Method, statusCode, time.Since(now).String(), cli.Request.URL.String())
 	}
 
 	return res, err
+}
+
+func (cli *RequestMiddleware) DoBind(value interface{}) error {
+	res, err := cli.Do()
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	data, err := ioutil.ReadAll(res.Body)
+	return json.Unmarshal(data, &value)
 }
