@@ -47,5 +47,8 @@ func (cli *RequestMiddleware) DoBind(value interface{}) error {
 	}
 	defer res.Body.Close()
 	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
 	return json.Unmarshal(data, &value)
 }
