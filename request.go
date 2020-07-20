@@ -10,7 +10,7 @@ import (
 )
 
 type RequestMiddleware struct {
-	Client        http.Client
+	Client        *http.Client
 	Request       *http.Request
 	IsLogDuration bool
 }
@@ -23,7 +23,7 @@ func NewRequestMiddleware(method, url string, body io.Reader, headers map[string
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-	return &RequestMiddleware{Client: http.Client{}, Request: req}, nil
+	return &RequestMiddleware{Client: &http.Client{}, Request: req}, nil
 }
 
 func (cli *RequestMiddleware) Do() (*http.Response, error) {
